@@ -1,19 +1,21 @@
-import apple.laf.JRSUIConstants;
-import javafx.scene.control.Tab;
+
 
 import javax.naming.SizeLimitExceededException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-/**
- * Created by AaronR on 2/8/17.
- * for ?
+/*
+ * Created by Aaron Renfroe on 1/24/17.
+ * EGR 326
+ * Assignment 3 Restaurant
+ * Class Restaurant: contains everything in the restaurant such as
+ * Servers, the waiting list, the list of tables, and the Servers Manager
  */
 public final class Restaurant {
     private String restaurantName;
     private HashMap<Table,Party> tables;
-    private LinkedList<Party> waitList;
+    private List<Party> waitList;
     private double cashRegister;
     private int tableCount;
     private int maxTableSize;
@@ -38,119 +40,99 @@ public final class Restaurant {
     }
 
 
-    private List<Servers> getServersOnDuty(){return new ArrayList<Servers>();}
+
 
     /**
-     *
+     * Accessor Method from TextUI to Servers
      * @return List of Servers on duty's toStrings, returns empty if server count is 0
      */
-    public List<String> serversOnDutyToString(){
-        List<String> sStrings = new ArrayList();
-        for (Servers servers1 : getServersOnDuty()) {
-            sStrings.add(servers1.toString());
-        }
-        return sStrings;
-
+    protected List<String> serversOnDutyToString() {
+        return servers.serversToStrings();
     }
-
     /**
-     *
+     * Accessor Method from TextUI to Servers
      * @return  number of servers on Duty
      */
-    public int addServer(){
+    protected int addServer(){
         return servers.addServer();
     }
 
     /**
-     *
+     * Accessor Method from TextUI to Servers
+     * Attempts to dismiss server from Servers
      * @return Dismissed Servers toString output
      * @throws NullPointerException if server count is 0 before call, there are 0 servers to cashOut
      * @throws UnsupportedOperationException if there are parties seated and only one remaining server, the last server cannot cashOut.
      */
-    public String dismissServer()throws NullPointerException, UnsupportedOperationException{return servers.cashOut();}
+    protected String dismissServer()throws NullPointerException, UnsupportedOperationException{return servers.cashOut();}
 
     /**
-     *
+     * Accessor Method from TextUI to Servers
      * @return returns number of servers on duty
      */
-    public int numberOfServers(){return servers.numberOfServers();}
+    protected int numberOfServers(){return servers.numberOfServers();}
 
     /**
-     *
+     * Accessor Method for the cash Register
      * @return String representation of cash in the Register: $0.00
      */
-    public String countCash(){return "$" + String.format("%1.2f", this.cashRegister);}
+    protected String countCash(){return "$" + String.format("%1.2f", this.cashRegister);}
 
     /**
-     *
-     * @return
+     * Returns each table's status.
+     * @return List of Table Status
      */
-    public List<String> tableStatuses(){
+    protected List<String> tableStatuses(){
         List<String> tStrings = new ArrayList();
 
         for (Table tempT: tables.keySet()){
             StringBuilder tString = new StringBuilder();
         // Table 5 (2-top): Jones party of 2 - Server #2
 
-        tString.append("Table " + tempT.getID() + "(" + tempT.getSize() + "-top):");
+        tString.append(tempT.toString() + " : ");
         Party hasParty = tables.get(tempT);
         if (hasParty!= null) {
-            tString.append(hasParty.getName() + " Party of " + (hasParty.getSize()));
-            tString.append(" Server #" + servers.getServerForTable(tempT));
+            tString.append(hasParty.getName() + "Party of " + (hasParty.getSize()));
+            tString.append(" Server #"+ servers.getServerForTable(tempT).getId());
             tStrings.add(tString.toString());
         } else {
-            tString.append(" empty");
+            tString.append("empty");
             tStrings.add(tString.toString());
         }
 
     }
-
         return tStrings;
     }
 
     /**
-     *
+     * Checks if Party's name exists in the system, if there is an empty table that will fit them
+     * or if they are too large to be seated in the restaurant
+     * @return  Returns true if can be seated.
      * @param p Party passed to check if Name exists in the system, if there is an empty table that will fit them,
      *          or if they are too large to be seated in the restaurant
      * @return  Returns true if can be seated.
      * @throws UnsupportedOperationException If the party's name exists in the system.
      * @throws SizeLimitExceededException If Party's size is too big.
      */
-    public boolean partyToBeSeated(Party p) throws UnsupportedOperationException, SizeLimitExceededException{
+    protected boolean partyToBeSeated(Party p) throws UnsupportedOperationException, SizeLimitExceededException{
 
         if (servers.hasServers()){
             Set<Map.Entry<Table,Party>> tempTables = tables.entrySet();
-            Table smallestFittingTable = new Table(99999,9999);
-            if (waitList.contains(p)){
+
+            if (waitList.contains(p) || tableForPartyWithName(p.getName()) != null){
                 throw new UnsupportedOperationException("Duplicate Name");
             }
-
-            for (Map.Entry kv:tempTables) {
-
-                if ((kv.getValue()) != null) {
-                    String name = p.getName();
-
-                    if (((Party) kv.getValue()).getName() == name) {
-                        throw new UnsupportedOperationException("Duplicate Name");
-                    }
-                    else if (p.getSize() > maxTableSize){
-                        throw new SizeLimitExceededException("Party is to large to be seated");
-                    }else if(p.getSize() < 1){
-                        throw new IllegalArgumentException();
-                    }
-                }else{
-                    if (kv.getKey().getClass() == Table.class){
-                        Table tempTable = (Table) kv.getKey();
-                        System.out.println(tempTable.toString());
-                        if (tempTable.getSize() < smallestFittingTable.getSize() && tempTable.getSize() >= p.getSize()){
-                            smallestFittingTable = tempTable;
-                        }
-                    }
-                }
+            else if (p.getSize() > maxTableSize){
+                throw new SizeLimitExceededException("Party is to large to be seated");
+            }else if(p.getSize() < 1){
+                throw new IllegalArgumentException();
             }
-            if (smallestFittingTable.getID() != 99999){
-                servers.assignToServer(smallestFittingTable);
-                tables.replace(smallestFittingTable, p);
+
+            Table smallestT = smallestAvailableTable(p.getSize());
+
+            if (smallestT != null){
+                servers.assignToServer(smallestT);
+                tables.replace(smallestT, p);
                 return true;
             }else {
                 return false;
@@ -159,19 +141,19 @@ public final class Restaurant {
     }
 
     /**
-     *
+     * Adds passed party to waiting list
      * @param party The party to be added to the waiting list
      */
-    public void addToWaitingList(Party party){
+    protected void addToWaitingList(Party party){
         waitList.add(party);
     }
 
     /**
-     *
+     * Reads the passed File in to memory and retrieves Restaurant Name and sets table ID's and Sizes
      * @param fileName File to be passed to the scanner upon initialization
      * @throws FileNotFoundException If file is not found
      */
-    public void readInfoFile(File fileName) throws FileNotFoundException{
+    protected void readInfoFile(File fileName) throws FileNotFoundException{
         try{
             Scanner restInfo = new Scanner(fileName);
             String rName = restInfo.nextLine().trim();
@@ -194,10 +176,10 @@ public final class Restaurant {
     }
 
     /**
-     *
-     * @return a List populated with the output from the toString Method of every party in waiting list. If waiting list is empty returns an empty List
+     * Getter for  the output from the toString Method of every party in waiting list.
+     * @return  If waiting list is empty returns an empty List
      */
-    public List<String> waitingList(){
+    protected List<String> waitingList(){
         List wListStrings = new ArrayList();
         for (Party p:waitList) {
             wListStrings.add(p.toString());
@@ -205,31 +187,75 @@ public final class Restaurant {
 
         return wListStrings;
     }
+
+    /**
+     * Called when CheckPlease is called. Adds bill to register, adds tip to assigned servers Tips, makes table available
+     * @param t Table the party is seated at
+     * @param bill bill amount to be added to register
+     * @param tip Tip amount to be added to servers tips
+     */
+    protected void partyIsLeaving(Table t,double bill, double tip){
+        cashRegister += bill;
+        servers.receiveTipClearTable(t,tip);
+        tables.replace(t,null);
+
+
+    }
+
+    /**
+     * Searches parties for party with name
+     * @param name Search term
+     * @return Table of siting party, if null returns null.
+     */
+    protected Table tableForPartyWithName(String name){
+        Set<Map.Entry<Table,Party>> tempTables = tables.entrySet();
+        for (Map.Entry<Table, Party> kv:tempTables) {
+            if ((kv.getValue()) != null) {
+                //getTableForPartyWithNAme();
+                if ((kv.getValue()).getName().equals(name)) {
+                    return kv.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
+    // searches Tables for smallest empty Table
+    //returns table if tables is found, otherwise returns null
+    private Table smallestAvailableTable(int size){
+        Table smallestFittingTable = new Table(99999,9999);
+        Set<Map.Entry<Table,Party>> tempTables = tables.entrySet();
+        for (Map.Entry kv:tempTables) {
+            Table tempTable = (Table) kv.getKey();
+            if (kv.getValue() == null) {
+                if (tempTable.getSize() < smallestFittingTable.getSize() && tempTable.getSize() >= size) {
+                    smallestFittingTable = tempTable;
+                }
+            }
+        }
+        if (smallestFittingTable.getSize()!= 9999){
+            return smallestFittingTable;
+        }
+        else return null;
+    }
+
+    /**
+     * Searches waiting list for a party that can fit at the recently cleared table
+     * @param t Recently Cleared TAble
+     * @return Returns Name of newly seated Party and the newly assigne server
+     */
+    protected String checkIfWaitListedCanBeSeated(Table t){
+
+        for(Party p:waitList){
+            if (p.getSize() <= t.getSize()){
+                waitList.remove(p);
+                tables.replace(t,p);
+                servers.assignToServer(t);
+                Server s = servers.getServerForTable(t);
+                return p.toString() + " - Server #"+s.getId();
+            }
+        }
+        return null;
+    }
 }
 
-/*
-if (choice.equals("S")) {
-				serversOnDuty();
-			} else if (choice.equals("A")) {
-					addServer();
-			} else if (choice.equals("D")) {
-				dismissServer();
-			} else if (choice.equals("R")) {
-				cashRegister();
-			} else if (choice.equals("P")) {
-				partyToBeSeated();
-			} else if (choice.equals("T")) {
-				tableStatus();
-			} else if (choice.equals("C")) {
-				checkPlease();
-			} else if (choice.equals("W")) {
-				waitingList();
-			} else if (choice.equals("Q")) {
-				break;
-			} else if (choice.equals("?")) {
-				displayOptions();
-			} else if (choice.equals("!")) {
-				rickRoll();
-			}
-			System.out.println();
- */

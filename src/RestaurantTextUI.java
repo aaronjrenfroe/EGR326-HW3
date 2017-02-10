@@ -178,24 +178,31 @@ public class RestaurantTextUI {
 	private void checkPlease() {
 		System.out.println("Send the check to a party that has finished eating:");
 		String partyName = ValidInputReader.getValidString("Party's name?", "^[a-zA-Z '-]+$");
-		
-		// when such a party is sitting at a table in the restaurant,
-		double subtotal = ValidInputReader.getValidDouble("Bill subtotal?", 0.0, 9999.99);
-		double tip = ValidInputReader.getValidDouble("Tip?", 0.0, 9999.99);
-		
-		// TODO: give tip to server, e.g.:
-		// Gave tip of $9.50 to Server #2.
-			
-		// update restaurant's cash register, e.g.
-		// Gave total of $39.75 to cash register.
-		
-		System.out.println("Seating from waiting list:");
-		// when a party on the waiting list can now be seated, e.g.:
-		// Table 6 (6-top): Erickson party of 5 - Server #2
-		
+
+
+		Table t = rest.tableForPartyWithName(partyName.trim().toUpperCase());
+		if( t != null) {
+				// when such a party is sitting at a table in the restaurant,
+			double subtotal = ValidInputReader.getValidDouble("Bill subtotal?", 0.0, 9999.99);
+			double tip = ValidInputReader.getValidDouble("Tip?", 0.0, 9999.99);
+			rest.partyIsLeaving(t,subtotal,tip);
+			// TODO: give tip to server, e.g.:
+			// Gave tip of $9.50 to Server #2.
+			// update restaurant's cash register, e.g.
+			// Gave total of $39.75 to cash register.
+			String seatedPartyString = rest.checkIfWaitListedCanBeSeated(t);
+			if (seatedPartyString!= null) {
+				System.out.println("Seating from waiting list:");
+				System.out.println(t.toString() +":" + seatedPartyString);
+			}
+			// when a party on the waiting list can now be seated, e.g.:
+			// Table 6 (6-top): Erickson party of 5 - Server #2
+		}
 		// when such a party is NOT sitting at a table in the restaurant,
-		System.out.println("There is no party by that name.");
-		crash("check, please");
+		else{
+			System.out.println("There is no party by that name.");
+		}
+
 	}
 	
 	// Called when W key is pressed from main menu.

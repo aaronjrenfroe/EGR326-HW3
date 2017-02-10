@@ -1,6 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by AaronR on 2/9/17.
@@ -93,15 +96,27 @@ public class ServersTest {
 
     @Test
     public void getServerForTable() throws Exception {
-        Table t = new Table(1,4);
+        Table t0 = new Table(1,4);
         Table t1 = new Table(2,5);
         Table t2 = new Table(3,6);
         Table t3 = new Table(4,7);
+        Table t4 = new Table(5,3);
+        Table t5 = new Table(6,4);
+        Table[] tableList = new Table[]{t0,t1,t2,t3,t4,t5};
         Servers s1 = addServerHelper();
-        s1.getServerForTable(t);
+        for (int i = 0; i < 6; i++) {
+            s1.assignToServer(tableList[i]);
+            s1.getServerForTable(tableList[i]);
+        }
+        Assert.assertTrue(true);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void getServerForTableNull() throws Exception {
+
+        Servers s2 = new Servers();
+        s2.getServerForTable(new Table(2,4));
 
 
     }
-
-
 }
