@@ -1,7 +1,7 @@
 
 import java.util.*;
 
-/**
+/**@author Aaron Renfroe
  * Created by Aaron Renfroe on 1/24/17.
  * EGR 326
  * Assignment 3 Restaurant
@@ -13,26 +13,11 @@ public final class RoundRobin<T> extends LinkedList {//implements Iterable<T> {
         super();
 
     }
-
-    public void add(Iterator <T> i, T e){
-        if (super.size() >0) {
-            int index = super.indexOf(i.next());
-            super.add(index, e);
-            if (super.size() >= 1) {
-                Iterator newIterator = this.iterator();
-
-                for (int j = 0; j < index; j++) {
-                    newIterator.next();
-                }
-                i = newIterator;
-            }
-
-        }else{
-            super.add(e);
-            i = this.iterator();
-        }
-
-    }
+    /**
+     * Iterator override hasNext() to always return true if the list size is greater than 0
+     *  and to return the first element when the end is reached after calling next()
+     * @return the Overrided Iterator.
+     */
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {

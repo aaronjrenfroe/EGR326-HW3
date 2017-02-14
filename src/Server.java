@@ -1,4 +1,5 @@
 /**
+ * @author Aaron Renfroe
  * Created by Aaron Renfroe on 1/24/17.
  * EGR 326
  * Assignment 3 Restaurant
@@ -12,6 +13,8 @@ public final class Server {
 
     /**
      * Constructor, init for id and tips.
+     * Id is not forced to be positive to allow integer overflows in the
+     * scenario of a restaurant having more than 2^31 serves
      * @param id a unique ID
      */
     public Server(int id){
@@ -33,7 +36,9 @@ public final class Server {
      * @param newTip Takes a double to add to servers Tips
      */
     protected void addTip(double newTip){
-        this.tips += newTip;
+        if (Math.floor(newTip) >=0) {
+            this.tips += newTip;
+        }
     }
 
     /**

@@ -16,7 +16,7 @@ public final class Servers {
      * Constructor, Initializes collection of servers, daily server count, RoundRobin Iterator, and tableAssignments
      */
     public Servers() {
-        serversRR = new RoundRobin();
+        serversRR = new RoundRobin<Servers>();
         dailyServerCount = 0;
         serverQ = serversRR.iterator();
         assignments = new HashMap<>();
@@ -27,8 +27,13 @@ public final class Servers {
      * @return New total number of servers
      */
     protected int addServer() {
-
-        this.serversRR.add(this.serverQ, new Server(++this.dailyServerCount));
+        RoundRobin newRR = new RoundRobin();
+        newRR.add(new Server(++dailyServerCount));
+        for (int i = 0; i < serversRR.size(); i++) {
+            newRR.add(serverQ.next());
+        }
+        serversRR = newRR;
+        serverQ = serversRR.iterator();
         return this.serversRR.size();
     }
 

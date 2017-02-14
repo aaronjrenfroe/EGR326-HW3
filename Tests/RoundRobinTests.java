@@ -1,6 +1,9 @@
 import org.junit.Test;
+import org.junit.Assert;
+
 
 import java.util.Iterator;
+
 
 /**
  * Created by AaronR on 2/9/17.
@@ -9,19 +12,15 @@ import java.util.Iterator;
 public class RoundRobinTests {
     @Test
     public void addAndRemoveTests(){
-        RoundRobin<Integer> r = new RoundRobin();
-        Iterator d = r.iterator();
+        RoundRobin rr = new RoundRobin();
+        Iterator ir = rr.iterator();
         for (int i = 0; i < 10; i++) {
-            r.add(d,i+1);
-
+            rr.add(i);
         }
-        for (int i = 0; i < r.size(); i++) {
-            System.out.println(d.next().toString());
-        }
-        r.remove();
-        d = r.iterator();
-        r.remove();
-        d = r.iterator();
 
+        for (int i = 0; i < 2*rr.size(); i++) {
+            Assert.assertTrue(ir.hasNext());
+            ir.next();
+        }
     }
 }

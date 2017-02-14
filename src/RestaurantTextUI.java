@@ -35,7 +35,7 @@ public class RestaurantTextUI {
 				"File name for restaurant data [" + DEFAULT_RESTAURANT_FILENAME + "]?",
 				DEFAULT_RESTAURANT_FILENAME);
 
-		// TODO: read restaurant info from tables file;
+
 		// return true if it was successful and false if not
 		//crash("read restaurant info from tables file: " + restaurantFile);
 		try{
@@ -144,7 +144,7 @@ public class RestaurantTextUI {
 			System.out.println("No servers to dismiss.");
 		}
 		
-		// TODO: cash out server and display current count of servers
+
 		// Server #2 cashes out with $47.95 in total tips.
 		// Servers now available: 3
 
@@ -186,7 +186,7 @@ public class RestaurantTextUI {
 			double subtotal = ValidInputReader.getValidDouble("Bill subtotal?", 0.0, 9999.99);
 			double tip = ValidInputReader.getValidDouble("Tip?", 0.0, 9999.99);
 			rest.partyIsLeaving(t,subtotal,tip);
-			// TODO: give tip to server, e.g.:
+
 			// Gave tip of $9.50 to Server #2.
 			// update restaurant's cash register, e.g.
 			// Gave total of $39.75 to cash register.
@@ -257,10 +257,9 @@ public class RestaurantTextUI {
 		}
 	}
 	
-	
 	// You know what this method does.
 	private void rickRoll() {
-		// TODO: tell you how I'm feeling; make you understand
+
 		System.out.println("We're no strangers to love");
 		System.out.println("You know the rules and so do I");
 		System.out.println("A full commitment's what I'm thinking of");

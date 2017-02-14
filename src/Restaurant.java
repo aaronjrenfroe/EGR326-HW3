@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 /*
- * Created by Aaron Renfroe on 1/24/17.
+ * @author Aaron Renfroe
  * EGR 326
  * Assignment 3 Restaurant
  * Class Restaurant: contains everything in the restaurant such as
@@ -257,5 +257,7 @@ public final class Restaurant {
         }
         return null;
     }
+
+
 }
 

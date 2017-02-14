@@ -1,4 +1,4 @@
-/**
+/** @author Aaron Renfroe
  * Created by Aaron Renfroe on 1/24/17.
  * EGR 326
  * Assignment 3 Restaurant
@@ -21,7 +21,7 @@ public final class Table implements Comparable{
     }
 
     /**
-     *
+     * Gets the size of the table.
      * @return returns number of seats at table
      */
     protected int getSize(){
