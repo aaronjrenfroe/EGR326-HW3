@@ -90,6 +90,7 @@ public class RestaurantTextUI {
 	
 	// Displays the list of key commands the user can use.
 	private void displayOptions() {
+		
 		System.out.println();
 		System.out.println("Main System Menu");
 		System.out.println("----------------");
