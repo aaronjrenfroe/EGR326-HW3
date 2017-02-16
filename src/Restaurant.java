@@ -64,7 +64,9 @@ public final class Restaurant {
      * @throws NullPointerException if server count is 0 before call, there are 0 servers to cashOut
      * @throws UnsupportedOperationException if there are parties seated and only one remaining server, the last server cannot cashOut.
      */
-    protected String dismissServer()throws NullPointerException, UnsupportedOperationException{return servers.cashOut();}
+    protected String dismissServer()throws NullPointerException, UnsupportedOperationException{
+        return servers.cashOut();
+    }
 
     /**
      * Accessor Method from TextUI to Servers
@@ -169,7 +171,6 @@ public final class Restaurant {
                     tables.put(new Table(tableCount++, tempSize), null);
                 }
             }
-            System.out.println("Tables Added:" + tableCount);
         }catch(FileNotFoundException fi){
             throw new FileNotFoundException("fi");
         }
@@ -195,9 +196,12 @@ public final class Restaurant {
      * @param tip Tip amount to be added to servers tips
      */
     protected void partyIsLeaving(Table t,double bill, double tip){
-        cashRegister += bill;
-        servers.receiveTipClearTable(t,tip);
-        tables.replace(t,null);
+
+        if (tables.get(t)!=null && bill>=0) {
+            servers.receiveTipClearTable(t, tip);
+            cashRegister += bill;
+            tables.replace(t, null);
+        }
 
 
     }
