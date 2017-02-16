@@ -46,7 +46,8 @@ public final class Party {
     @Override
     public boolean equals(Object obj) {
         if (obj.getClass() == Party.class){
-            if (obj.hashCode() == this.hashCode()){
+            Party p = (Party) obj;
+            if (p.getName().equals(this.getName())){
                 return true;
             }
         }
