@@ -86,7 +86,6 @@ public final class Servers {
      */
     protected String cashOut() throws NullPointerException, UnsupportedOperationException{
 
-
         if (assignments.size() > 0)  {
 
             if (serversRR.size() == 1){
@@ -128,7 +127,7 @@ public final class Servers {
             if (v.contains(t)){
                 v.remove(t);
                 k.addTip(tip);
-                // return is nessissary because once server is found we do not need to continue looking
+                // return is necessary because once server is found we do not need to continue looking
                 return;
             }
         });

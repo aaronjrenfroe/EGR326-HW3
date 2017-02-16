@@ -16,8 +16,6 @@ public final class Table implements Comparable{
     public Table(int ID, int size ){
         this.size = size;
         this.ID = ID;
-
-
     }
 
     /**
@@ -29,7 +27,6 @@ public final class Table implements Comparable{
     }
 
     /**
-     *
      * @param o object to compare
      * @return returns true if tables are same state
      */
@@ -43,7 +40,6 @@ public final class Table implements Comparable{
     }
 
     /**
-     *
      * @return Hashcode based on ID and Table Size
      */
     @Override
@@ -52,7 +48,6 @@ public final class Table implements Comparable{
     }
 
     /**
-     *
      * @param obj Object
      * @return If Object is Table's class and table are the same Id and Size
      */
