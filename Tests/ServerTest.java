@@ -13,12 +13,12 @@ public class ServerTest {
     @Test
     public void serverConstructorTest(){
         Server server = new Server(12);
-        Server s1 = new Server(-999999999);
-        Server s2 = new Server(99999999);
-        Assert.assertEquals(-99999999,s1.getId());
-        Assert.assertEquals(99999999,s2.getId());
-        Assert.assertEquals(0,s1.getTips());
-        Assert.assertEquals(0,s2.getTips());
+        Server s1 = new Server(-9999999);
+        Server s2 = new Server(9999999);
+        Assert.assertEquals(-9999999,s1.getId());
+        Assert.assertEquals(9999999,s2.getId());
+        Assert.assertEquals("$0.00",s1.getTips());
+        Assert.assertEquals("$0.00",s2.getTips());
     }
 
     @Test
@@ -26,7 +26,7 @@ public class ServerTest {
         Server server = new Server(12);
         Assert.assertTrue(server.getId()==12);
 
-        Server s1 = new Server(-999999999);
+        Server s1 = new Server(-99999999);
         Server s2 = new Server(99999999);
         Assert.assertEquals(-99999999,s1.getId());
         Assert.assertEquals(99999999,s2.getId());
