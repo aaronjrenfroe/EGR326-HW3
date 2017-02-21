@@ -171,9 +171,11 @@ public final class Restaurant {
                     tables.put(new Table(tableCount++, tempSize), null);
                 }
             }
+            restInfo.close();
         }catch(FileNotFoundException fi){
             throw new FileNotFoundException("fi");
         }
+
     }
 
     /**
@@ -227,6 +229,7 @@ public final class Restaurant {
     // searches Tables for smallest empty Table
     //returns table if tables is found, otherwise returns null
     private Table smallestAvailableTable(int size){
+
         Table smallestFittingTable = new Table(99999,9999);
         Set<Map.Entry<Table,Party>> tempTables = tables.entrySet();
         for (Map.Entry kv:tempTables) {

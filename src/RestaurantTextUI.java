@@ -42,9 +42,8 @@ public class RestaurantTextUI {
 			rest.readInfoFile(restaurantFile);
 		}catch(FileNotFoundException fi){
 			System.out.println("Unable to read restaurant data: file not found.");
+			return false;
 		}
-
-		// when there is an error reading the file,
 
 		System.out.println();
 		return true;
