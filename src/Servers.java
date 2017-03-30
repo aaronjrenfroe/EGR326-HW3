@@ -7,18 +7,19 @@ import java.util.*;
  * Class Servers is a manager of all the servers and their actions
  */
 public final class Servers {
-    private RoundRobin serversRR;
+    private LinkedList<Server> serverQueue;
     private int dailyServerCount;
-    private Iterator<Server> serverQ;
     private HashMap<Server, List<Table>> assignments;
+    private int numberOFNewServersInFront;
 
     /**
      * Constructor, Initializes collection of servers, daily server count, RoundRobin Iterator, and tableAssignments
      */
     public Servers() {
-        serversRR = new RoundRobin<Servers>();
+        serverQueue =  new LinkedList();
         dailyServerCount = 0;
-        serverQ = serversRR.iterator();
+        numberOFNewServersInFront = 0;
+
         assignments = new HashMap<>();
     }
 
@@ -27,14 +28,10 @@ public final class Servers {
      * @return New total number of servers
      */
     protected int addServer() {
-        RoundRobin newRR = new RoundRobin();
-        newRR.add(new Server(++dailyServerCount));
-        for (int i = 0; i < serversRR.size(); i++) {
-            newRR.add(serverQ.next());
-        }
-        serversRR = newRR;
-        serverQ = serversRR.iterator();
-        return this.serversRR.size();
+
+
+        serverQueue.add(numberOFNewServersInFront++,new Server(dailyServerCount++ + 1));
+        return serverQueue.size();
     }
 
     /**
@@ -42,7 +39,7 @@ public final class Servers {
      * @return True if there is at least one server on duty
      */
     protected boolean hasServers() {
-        return serverQ.hasNext();
+        return serverQueue.size()>0;
     }
 
     /**
@@ -50,7 +47,7 @@ public final class Servers {
      * @return The number of servers on duty
      */
     protected int numberOfServers() {
-        return serversRR.size();
+        return serverQueue.size();
     }
 
     /**
@@ -58,7 +55,13 @@ public final class Servers {
      * @return Next server
      */
     protected Server getNext(){
-      return serverQ.next();
+      Server nextS = serverQueue.poll();
+      serverQueue.add(nextS);
+      if (numberOFNewServersInFront > 0) {
+          numberOFNewServersInFront--;
+      }
+
+      return nextS;
     }
 
     /**
@@ -66,7 +69,7 @@ public final class Servers {
      * @param t Table to be assigned to Next server
      */
     protected void assignToServer(Table t){
-        Server nextServer = serverQ.next();
+        Server nextServer = getNext();
         if (assignments.containsKey(nextServer)){
             List serversTables = assignments.get(nextServer);
             serversTables.add(t);
@@ -88,10 +91,10 @@ public final class Servers {
 
         if (assignments.size() > 0)  {
 
-            if (serversRR.size() == 1){
+            if (serverQueue.size() == 1){
                 throw new UnsupportedOperationException("Cannot remove last server while parties are still seated");
             }else {
-                Server leavingServer = (Server) serverQ.next();
+                Server leavingServer = serverQueue.poll();
 
                 if (assignments.containsKey(leavingServer)) {
 
@@ -99,22 +102,17 @@ public final class Servers {
 
                     tList.forEach(table -> assignToServer(table));
                 }
-                serversRR.remove(leavingServer);
-                serverQ = serversRR.iterator();
                 return "Server #" + leavingServer.getId() + " cashes out with " + leavingServer.getTips();
             }
 
-        }else if(serversRR.size() == 0){
+        }else if(serverQueue.size() == 0){
             throw new NullPointerException("There are no servers to remove.");
             // no parties so we can remove server
         }else{
             assert assignments.size() == 0;
-            Server leavingServer = serverQ.next();
-            serversRR.remove(leavingServer);
-            serverQ = serversRR.iterator();
+            Server leavingServer = serverQueue.poll();
             return "Server #" + leavingServer.getId() + " cashes out with " + leavingServer.getTips();
         }
-
     }
 
     /**
@@ -161,7 +159,7 @@ public final class Servers {
     protected List<String> serversToStrings(){
         List<String> sStrings = new ArrayList();
         for (int i = 0; i < numberOfServers(); i++) {
-            sStrings.add(serverQ.next().toString());
+            sStrings.add(serverQueue.get(i).toString());
         }
         return sStrings;
     }
